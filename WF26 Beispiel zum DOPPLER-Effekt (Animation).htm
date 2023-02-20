@@ -1,0 +1,464 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html class="LEIFI_html">
+	<head>
+		<title>Beispiel zum DOPPLER-Effekt</title>
+<style>
+html.LEIFI_html {
+	width: 100%;
+	height: 100%;
+	}
+
+body.LEIFI_body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+	}
+
+div.LEIFI_animation {
+	position: relative;
+	margin: auto;
+	background-color: #FAFAFA;
+	border: 1px solid grey;
+	}
+
+div.LEIFI_leinwand {
+	position: absolute;
+	}
+
+div.LEIFI_steuerung {
+	position: absolute;
+	text-align: center;
+	}
+
+div.LEIFI_2knoepfe {
+	position: relative;
+	margin: 5px auto 5px auto;
+	width: 60px;
+	}
+
+div.LEIFI_3knoepfe {
+	position: relative;
+	margin: 5px auto 5px auto;
+	width: 90px;
+	}
+
+input.LEIFI_knopf_links {
+	float: left;
+	width: 30px;
+	height: auto;
+	}
+
+input.LEIFI_knopf_mitte {
+	margin-left:auto;
+	margin-right:auto;
+	width: 30px;
+	height: auto;
+	}
+
+input.LEIFI_knopf_rechts {
+	float: right;
+	width: 30px;
+	height: auto;
+	}
+
+div.LEIFI_parameter {
+	position: absolute;
+	}
+
+div.LEIFI_parameter div {
+	position: absolute;
+	text-align: center;
+	}
+
+span.LEIFI_span_zentriert {
+	position: absolute;
+	margin-left: 10px;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+	}
+
+span.LEIFI_span {
+	position: absolute;
+	margin-left: 10px;
+	text-align: left;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+	}
+
+input[type="range"].LEIFI_range {
+	position: absolute;
+	margin-left: 10px;
+	}
+
+input[type="range"].LEIFI_range::-ms-tooltip {
+	display: none;
+	}
+
+input[type="checkbox"].LEIFI_checkbox {
+	margin-left: 10px;
+	}
+
+input[type="button"].LEIFI_button {
+	position: absolute;
+	margin-left: 10px;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+	}
+
+button.LEIFI_button {
+	height: 30px;
+	border-radius: 0px;
+	margin-left: 10px;
+	background-color: #CCCCCC;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	}
+
+input[type="radio"].LEIFI_radio {
+	margin-left: 10px;
+	}
+
+label.LEIFI_label {
+	margin-left: 5px;
+	vertical-align: 2px;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	white-space: nowrap;
+	}
+
+select.LEIFI_select {
+	position: absolute;
+	margin-left: 10px;
+	margin-top:-3.5px;
+	height: 20px;
+	border-radius: 0px;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	}
+
+textarea.LEIFI_textarea {
+	position: absolute;
+	margin-left: 10px;	
+	padding: 3px;
+	border-radius: 0px;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	}
+
+input[type="text"].LEIFI_text {
+	position: absolute;
+	margin-left: 10px;
+	margin-top:-3.5px;
+	padding-left: 2px;
+	height: 16px;
+	border-radius: 0px;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	}
+</style>
+	</head>
+	<body class="LEIFI_body">
+		<div class="LEIFI_animation" style="width:700px; height:400px"> <!-- mit Rahmen 702 x 402 -->
+			<div class="LEIFI_parameter" style="left:0px; top:0px; width:250px; height:400px">
+				<div style="top:30px"><button class="LEIFI_button" id="WF26_bu2" style="width:230px">Pause</button></div>
+				<div style="top:80px"><button class="LEIFI_button" id="WF26_bu1" style="width:230px">Zur&uuml;ck</button></div>
+				<div style="top:150px"><textarea class="LEIFI_textarea" id="WF26_ta" cols=30 rows=10 style="width:220px; min-width:220px; max-width:220px; height:100px; min-height:100px; max-height:100px">&nbsp;</textarea></div>
+				<div style="top:350px"><span class="LEIFI_span">&copy;&nbsp;&nbsp;W.&nbsp;Fendt&nbsp;1998</span></div>
+			</div>
+			<div class="LEIFI_leinwand" style="left:250px; top:0px; width:450px; height:400px"><canvas width="450" height="400" id="WF26_cv">HTML5-Canvas nicht unterst&uuml;tzt!</canvas></div>
+			<script>
+// Beispiel zum Doppler-Effekt
+// Java-Applet (25.02.1998) umgewandelt
+// 10.03.2015 - 21.03.2015
+// angepasst für LEIFIphysik (www.leifiphysik.de) am 21.09.2015 von Thomas Unkelbach
+
+// ****************************************************************************
+// * Autor: Walter Fendt (www.walter-fendt.de)                                *
+// * Dieses Programm darf - auch in veränderter Form - für nicht-kommerzielle *
+// * Zwecke verwendet und weitergegeben werden, solange dieser Hinweis nicht  *
+// * entfernt wird.                                                           *
+// **************************************************************************** 
+
+// Beispiel zum Doppler-Effekt, deutsche Texte
+// Letzte Änderung 21.03.2015
+
+document.addEventListener("DOMContentLoaded", Dopplereffekt(), false); // Nach dem Laden der Seite Start-Methode aufrufen
+
+function Dopplereffekt() {
+
+var text01 = ["Pause", "Weiter"];                          // Text für unteren Schaltknopf
+
+var text02 = [                                             // Erläuterungstext
+  ["Dadurch, dass sich der Notarzt-",
+  "wagen der Person n\u00e4hert,",
+  "kommen die Wellenfronten",
+  "in k\u00fcrzeren Zeitabst\u00e4nden an."],
+  ["Wenn sich das Fahrzeug",
+  "von der Person entfernt,",
+  "sind die zeitlichen Abst\u00e4nde",
+  "zwischen den eintreffenden",
+  "Wellenfronten verl\u00e4ngert."]];
+
+// Konstanten:
+
+var T = 2;                                                 // Schwingungsdauer (s)
+var V = 12;                                                // Geschwindigkeit der Schallquelle (Pixel/s)
+var C = 20;                                                // Schallgeschwindigkeit (Pixel/s)
+
+// Farben:
+
+var colorSky = "#7FBCFF";                                  // Farbe für Himmel
+var colorGround = "#c0c0c0";                               // Farbe für Straße
+var colorSun = "#ffFF00";                                  // Farbe für Sonne
+var colorHouse11 = "#C3C800";                              // Farbe für Haus 1 (Mauerwerk)
+var colorHouse12 = "#5A145A";                              // Farbe für Haus 1 (Dach)
+var colorHouse21 = "#5A145A";                              // Farbe für Haus 2 (Mauerwerk)
+var colorHouse22 = "#C3C800";                              // Farbe für Haus 2 (Dach)
+var colorWindow = "#CCCCCC";                               // Farbe für Fenster
+var colorDoor = "#999999";                                 // Farbe für Türen
+
+// Attribute:
+
+var canvas, ctx;                                           // Zeichenfläche, Grafikkontext
+var width, height;                                         // Abmessungen der Zeichenfläche (Pixel)
+var bu1, bu2;                                              // Schaltknöpfe (Zurück, Pause/Weiter)
+var ta;                                                    // Textbereich
+var on;                                                    // Flag für Bewegung
+var t0;                                                    // Anfangszeitpunkt
+var t;                                                     // Aktuelle Zeit (s)
+var timer;                                                 // Timer für Animation
+var mx, my;                                                // Koordinaten des Mittelpunkts (Pixel)
+var x;                                                     // Position der Schallquelle (Pixel)
+var left;                                                  // Flag (Notarztwagen links vom Beobachter)
+var arrival;                                               // Flag (Ankunft einer Wellenfront)
+
+start ();
+
+// Start:
+// Seiteneffekt canvas, width, height, ctx, bu1, bu2, t, on, timer, t0, mx, my, left
+// Wirkung auf Textbereich
+
+function start () {
+  canvas = document.getElementById("WF26_cv");                  // Zeichenfläche
+  width = canvas.width; height = canvas.height;            // Abmessungen (Pixel)
+  ctx = canvas.getContext("2d");                           // Grafikkontext
+  bu1 = document.getElementById("WF26_bu1");                    // Oberer Schaltknopf (Zurück)
+  bu2 = document.getElementById("WF26_bu2");                    // Unterer Schaltknopf (Pause/Weiter)
+  ta = document.getElementById("WF26_ta");                      // Textbereich
+  t = 0;                                                   // Zeitvariable (s)  
+  startAnimation();                                        // Animation zunächst angeschaltet  
+  mx = width/2; my = height/2+50;                          // Position des Mittelpunkts (Pixel)
+  setLeft(true);                                           // Vorbereitungen für Position links vom Beobachter
+  bu1.onclick = reactionReset;                             // Reaktion auf Resetknopf
+  bu2.onclick = reactionStart;                             // Reaktion auf Schaltknopf Pause/Weiter
+  } // Ende der Methode start
+    
+// Reaktion auf Resetknopf:
+// Seiteneffekt t, left, on, timer, t0
+// Wirkung auf Schaltknopf Pause/Weiter und Textbereich
+   
+function reactionReset () {
+  t = 0;                                                   // Zeitvariable zurücksetzen
+  setLeft(true);                                           // Vorbereitungen für Position links vom Beobachter
+  if (!on) startAnimation();                               // Falls nötig, Animation starten
+  bu2.innerHTML = text01[0];                               // Text "Pause" für unteren Schaltknopf
+  }
+  
+// Reaktion auf den Schaltknopf Pause/Weiter:
+// Seiteneffekt on, timer, t0
+// Wirkung auf Schaltknopf Pause/Weiter
+
+function reactionStart () {
+  if (on) stopAnimation();                                 // Falls Animation läuft, stoppen ...
+  else startAnimation();                                   // Sonst Animation starten
+  bu2.innerHTML = (on ? text01[0] : text01[1]);            // Schaltknopf-Text
+  }
+    
+// Animation starten oder fortsetzen:
+// Seiteneffekt on, timer, t0
+
+function startAnimation () {
+  on = true;                                               // Animation angeschaltet
+  timer = setInterval(paint,40);                           // Timer mit Intervall 0,040 s aktivieren
+  t0 = new Date();                                         // Neuer Anfangszeitpunkt 
+  }
+  
+// Animation stoppen:
+// Seiteneffekt on, timer
+
+function stopAnimation () {
+  on = false;                                              // Animation abgeschaltet
+  clearInterval(timer);                                    // Timer deaktivieren
+  }
+  
+// Hilfsroutine: Vorbereitungen für Position links oder rechts vom Beobachter
+// l ... Flag für Position links vom Beobachter
+// Seiteneffekt left
+// Wirkung auf Textbereich
+
+function setLeft (l) {
+  left = l;                                                // Flag übernehmen  
+  var text = text02[l?0:1];                                // Array der Textzeilen für linke bzw. rechte Seite 
+  var s = "";                                              // Neue Zeichenkette (leer)
+  for (var i=0; i<text.length; i++) s += text[i]+"\n";     // Zeilen und Zeilenumbrüche hinzufügen
+  ta.value = s;                                            // Text in den Textbereich übernehmen
+  }
+     
+//-------------------------------------------------------------------------------------------------
+
+// Neuer Grafikpfad mit Standardwerten:
+
+function newPath () {
+  ctx.beginPath();                                         // Neuer Grafikpfad
+  ctx.strokeStyle = "#000000";                             // Linienfarbe schwarz
+  ctx.lineWidth = 1;                                       // Liniendicke 1
+  }
+  
+// Linie zeichnen:
+// x1, y1 ... Anfangspunkt (Pixel)
+// x2, y2 ... Endpunkt (Pixel)
+
+function line (x1, y1, x2, y2) {
+  ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);                    // Linie vorbereiten
+  ctx.stroke();                                            // Linie zeichnen
+  }
+  
+// Rechteck mit schwarzem Rand:
+// (x,y) ... Koordinaten der Ecke links oben (Pixel)
+// w ....... Breite (Pixel)
+// h ....... Höhe (Pixel)
+// c ....... Füllfarbe (optional)
+
+function rectangle (x, y, w, h, c) {
+  if (c) ctx.fillStyle = c;                                // Füllfarbe
+  newPath();                                               // Neuer Pfad
+  ctx.fillRect(x,y,w,h);                                   // Rechteck ausfüllen
+  ctx.strokeRect(x,y,w,h);                                 // Rand zeichnen
+  }
+
+// Kreis zeichnen:
+// (x,y) ... Mittelpunktskoordinaten (Pixel)
+// r ....... Radius (Pixel)
+// c ....... Füllfarbe (optional)
+// b ....... Flag für schwarzen Rand
+
+function circle (x, y, r, c, b) {
+  if (c) ctx.fillStyle = c;                                // Füllfarbe
+  newPath();                                               // Neuer Pfad (Standardwerte)
+  ctx.arc(x,y,r,0,2*Math.PI,true);                         // Kreis vorbereiten
+  if (c) ctx.fill();                                       // Falls Füllfarbe definiert, Kreis ausfüllen ...
+  if (b) ctx.stroke();                                     // Falls gewünscht, Kreisrand zeichnen
+  }
+  
+// Haus:
+// c1 ... Farbe für Mauer
+// c2 ... Farbe für Dach
+// x .... Position (Pixel)
+
+function house (c1, c2, x) {
+  rectangle(x-45,my-45,95,45,c1);                          // Mauerwerk 
+  rectangle(x-50,my-75,105,30,c2);                         // Dach
+  for (var i=0; i<4; i++)                                  // Für alle Fenster ...
+    if (i != 2)                                            // Fenster zeichnen
+      rectangle(x-35+i*20,my-30,15,15,colorWindow); 
+  rectangle(x+5,my-30,15,30,colorDoor);                    // Türe zeichnen
+  }
+  
+// Notarztwagen:
+
+function ambulance () {
+  ctx.fillStyle = "#ffffff";                               // Füllfarbe weiß
+  ctx.fillRect(x-40,my-22,32,17);                          // Linker Teil des Fahrzeugs
+  ctx.fillRect(x-9,my-13,9,8);                             // Rechter Teil des Fahrzeugs
+  newPath();                                               // Neuer Grafikpfad (Standardwerte)
+  ctx.moveTo(x-40,my-22);                                  // Anfangspunkt (links oben)
+  ctx.lineTo(x-8,my-22);                                   // Linie nach rechts
+  ctx.lineTo(x-8,my-13);                                   // Linie nach unten
+  ctx.lineTo(x,my-13);                                     // Linie nach rechts
+  ctx.lineTo(x,my-5);                                      // Linie nach unten
+  ctx.lineTo(x-40,my-5);                                   // Linie nach links
+  ctx.lineTo(x-40,my-22);                                  // Linie nach oben (Zurück zum Ausgangspunkt)
+  ctx.stroke();                                            // Polygonzug zeichnen
+  rectangle(x-17,my-19,6,7,"#0000ff");                     // Fenster
+  ctx.fillStyle = "#ff0000";                               // Füllfarbe rot
+  ctx.fillRect(x-31,my-15.5,10,4);                         // Rotes Kreuz, waagrechter Balken
+  ctx.fillRect(x-28,my-18.5,4,10);                         // Rotes Kreuz, senkrechter Balken
+  circle(x-32,my-4,4,"#000000");                           // Linkes Rad 
+  circle(x-8,my-4,4,"#000000");                            // Rechtes Rad
+  }
+
+// Wellenfronten:
+// Seiteneffekt arrival
+
+function circles () {
+  arrival = false;                                         // Flag setzen (Wellenfront nicht beim Beobachter)
+  for (var i=0; i*T<t; i++) {                              // Für alle Wellenfronten ...
+    var x0 = i*V*T;                                        // Mittelpunkt der Wellenfront (Pixel)
+    var r = C*(t-i*T);                                     // Radius (Pixel) 
+    circle(x0,my-10,r,null,true);                          // Wellenfront zeichnen
+    var xFront = (left ? x0+r : x0-r);                     // x-Koordinate der Wellenfront (Pixel)
+    if (Math.abs(xFront-mx) < 2) arrival = true;           // Falls Wellenfront beim Beobachter, Flag korrigieren
+    }
+  }
+    
+// Person:
+// c ....... Farbe
+// (x,y) ... Position (Pixel)
+
+function person (c, x, y) {
+  circle(x,y-14,3,c);                                      // Kopf
+  ctx.beginPath();                                         // Neuer Grafikpfad                                               
+  ctx.lineWidth = 1.5;                                     // Liniendicke
+  ctx.strokeStyle = c;                                     // Linienfarbe
+  line(x,y-12,x-2,y);                                      // Linkes Bein
+  line(x,y-12,x+2,y);                                      // Rechtes Bein
+  line(x,y-12,x-5,y-5);                                    // Linker Arm
+  line(x,y-12,x+5,y-5);                                    // Rechter Arm
+  }
+  
+// Grafikausgabe:
+// Seiteneffekt t, t0, x, left, x, arrival 
+// Wirkung auf Textbereich 
+  
+function paint () {
+  if (on) {                                                // Falls Animation läuft ...
+    var t1 = new Date();                                   // Aktuelle Zeit
+    t += (t1-t0)/1000;                                     // Zeitvariable aktualisieren 
+    t0 = t1;                                               // Anfangszeitpunkt aktualisieren
+    }
+  if (t > 60) {                                            // Falls maximale Zeitdauer (60 s) überschritten ...
+    t = 0;                                                 // Zeitvariable zurücksetzen 
+    x = 0;                                                 // Positionsvariable zurücksetzen  
+    setLeft(true);                                         // Vorbereitungen für Position links vom Beobachter
+    }
+  rectangle(0,0,width,my,colorSky);                        // Himmel
+  circle(60,60,30,colorSun,false);                          // Sonne      
+  house(colorHouse11,colorHouse12,100);                    // Linkes Haus
+  house(colorHouse21,colorHouse22,350);                    // Rechtes Haus
+  x = V*t;                                                 // Positionsvariable (Pixel) 
+  ambulance();                                             // Notarztwagen
+  circles();                                               // Wellenfronten
+  person(arrival ? "#ff0000" : "#000000",mx,my);           // Person
+  if (left && x > mx)                                      // Falls Fahrzeug am Beobachter vorbeigefahren ist ...
+    setLeft(false);                   	                   // ... Vorbereitungen für Position rechts vom Beobachter    
+  rectangle(0,my,width,height-my,colorGround);             // Straße
+  }
+}
+</script>
+		</div>
+	</body>
+</html>
